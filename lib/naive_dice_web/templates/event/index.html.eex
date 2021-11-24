@@ -1,0 +1,32 @@
+<section class="jumbotron">
+  <h1>Naive Dice</h1>
+  <p>
+    We provided this simple UI (based on Twitter Bootstrap) to make sure
+    you don't do any UI work.
+    <br>
+    Instead please focus on the thing which matters for this trial task -
+    <strong> on 100% correct implementation of ticket reservation and Stripe charge</strong> 
+  </p>
+</section>
+
+<%= if length(@events) > 0 do %>
+  <p>Start the booking flow:</p>
+  <%= for event <- @events do %>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">"<%= event.title %>"</h5>
+        <a href=<%= Routes.event_ticket_path(@conn, :new, event.id) %> class="btn btn-primary">Book now</a>
+      </div>
+    </div>
+  <% end %>
+  <br>
+  <p>
+    or check the
+    <a href="<%= Routes.guest_path(@conn, :index) %>">guests list</a>
+  </p>
+<% else %>
+  <p>There are no events in the database. Apply seeds by executing:</p>
+  <pre><code>
+    mix run priv/repo/seeds.exs
+  </code></pre>
+<% end %>

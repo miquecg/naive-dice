@@ -1,0 +1,16 @@
+<!--
+Renders a successfully purchased ticket.
+-->
+
+<h1>Congratulations <%= @ticket.user_name %>!</h1>
+
+<p>
+    You've been added to the 
+    <a href="<%= Routes.guest_path(@conn, :index) %>">list of guests</a>
+</p>
+
+<br>
+<br>
+<br>
+<br>
+<br>

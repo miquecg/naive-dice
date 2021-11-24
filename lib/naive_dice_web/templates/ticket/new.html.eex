@@ -1,0 +1,30 @@
+<!--
+Renders an empty form with user name input. That's an entry point for the booking flow.
+-->
+
+<h1>
+  DON'T MISS YOUR TICKETS
+  <br>
+  FOR <%= @event.title %>
+</h1>
+
+<p>
+only <%= @remaining_tickets %> ticket(s) left
+</p>
+
+<br>
+<br>
+<br>
+<br>
+
+<%= form_for @changeset, Routes.event_ticket_path(@conn, :create, @event.id), fn f -> %>
+  <div class="col-md-6 mb-3">
+    <label>YOUR NAME </label>
+    <br>
+    <%= text_input f, :user_name, required: true, class: "form-control", placeholder: "e.g John Doe" %>
+
+    <br>
+
+    <%= submit "Reserve ticket for 5 minutes", class: "btn btn-primary" %>
+  </div>
+<% end %>

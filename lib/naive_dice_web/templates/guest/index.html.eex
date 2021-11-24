@@ -1,0 +1,19 @@
+<h1>Registered guests</h1>
+
+<ul class="list-unstyled">
+<%= for name <- @guest_names do %>
+  <li><%= name %></li>
+<% end %>
+</ul>
+
+<br>
+
+<p>
+  <%= link(
+    "Clear guests list and start over again with 5 tickets available", 
+    to: Routes.guest_path(@conn, :reset_guests),
+    method: :delete,
+    data: [confirm: "This will delete all tickets from the DB. OK?"],
+    class: "btn btn-primary"
+  ) %>
+</p>
