@@ -1,0 +1,26 @@
+<h1>
+  DON'T MISS YOUR TICKETS
+<br>
+  FOR <%= @event.title %>
+</h1>
+
+<p><%= @event.remaining_tickets %> ticket(s) remaining.</p>
+
+<br>
+<br>
+<br>
+<br>
+
+<%= if @event.remaining_tickets > 0 do %>
+  <%= form_for @conn, Routes.event_order_path(@conn, :create, @event.id), [as: :order], fn f -> %>
+    <div class="col-md-6 mb-3">
+      <label>YOUR NAME</label>
+      <br>
+      <%= text_input f, :user_name, required: true, class: "form-control", placeholder: "e.g John Doe" %>
+
+      <br>
+
+      <%= submit "Reserve ticket for 5 minutes", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+<% end %>

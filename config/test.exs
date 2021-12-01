@@ -1,7 +1,7 @@
 use Mix.Config
 
 # Configure your database
-config :naive_dice, NaiveDice.Repo,
+config :naive_dice, Reservation.Repo,
   username: "postgres",
   password: "postgres",
   database: "naive_dice_test",

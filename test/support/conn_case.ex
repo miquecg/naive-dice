@@ -29,10 +29,10 @@ defmodule NaiveDiceWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(NaiveDice.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Reservation.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(NaiveDice.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Reservation.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

@@ -1,9 +1,9 @@
-defmodule NaiveDice.Events.Event do
+defmodule Reservation.Schemas.Event do
   use Ecto.Schema
 
   schema "events" do
-    field :allocation, :integer
     field :title
+    field :allocation, :integer
 
     timestamps()
   end
