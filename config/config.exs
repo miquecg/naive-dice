@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :naive_dice,
-  ecto_repos: [NaiveDice.Repo]
+  ecto_repos: [Reservation.Repo]
 
 config :naive_dice, NaiveDiceWeb.Endpoint,
   url: [host: "localhost"],

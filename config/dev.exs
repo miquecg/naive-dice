@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :naive_dice, NaiveDice.Repo,
+config :naive_dice, Reservation.Repo,
   username: "postgres",
   password: "postgres",
   database: "naive_dice_dev",
