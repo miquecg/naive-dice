@@ -1,8 +1,3 @@
-<!--
-Renders a payment form. 
-Capturing a payment "updates" the ticket (marks it as a "paid" one).
--->
-
 <div class="all-bold">
 
     <p>Nice to meet you <%= @ticket.user_name %>!</p>
@@ -17,7 +12,7 @@ Capturing a payment "updates" the ticket (marks it as a "paid" one).
 
 <%= button(
     "TODO: integrate Stripe here",
-     to: Routes.ticket_path(@conn, :update, @ticket.id),
+     to: Routes.order_path(@conn, :update, @ticket.id),
      method: :put,
      class: "btn btn-primary"
 ) %>

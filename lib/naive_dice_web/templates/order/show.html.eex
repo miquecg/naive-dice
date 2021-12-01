@@ -1,7 +1,3 @@
-<!--
-Renders a successfully purchased ticket.
--->
-
 <h1>Congratulations <%= @ticket.user_name %>!</h1>
 
 <p>

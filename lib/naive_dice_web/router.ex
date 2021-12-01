@@ -18,12 +18,11 @@ defmodule NaiveDiceWeb.Router do
 
     get "/", EventController, :index
 
-    resources("/events", EventController, only: [:index, :show]) do
-      resources("/tickets", TicketController, only: [:new, :create])
+    resources("/events", EventController, only: [:index]) do
+      resources("/orders", OrderController, only: [:new, :create])
     end
 
-    # event_id is captured on a Ticket already - no need to have it in a route
-    resources("/tickets", TicketController, only: [:edit, :update, :show])
+    resources("/orders", OrderController, only: [:edit, :update, :show])
 
     resources("/guests", GuestController, only: [:index])
     delete "/guests/reset", GuestController, :reset_guests
