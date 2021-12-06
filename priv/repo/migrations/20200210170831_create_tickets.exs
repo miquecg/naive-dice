@@ -7,7 +7,6 @@ defmodule NaiveDice.Repo.Migrations.CreateTickets do
       add :user_name, :varchar, null: false
       # It would make sense to have it.
       # add :ticket_number, :integer, null: false
-      add :price_cents, :integer, null: false
 
       add :event_id, references("events"), null: false
 
