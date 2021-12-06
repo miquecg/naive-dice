@@ -8,6 +8,11 @@ config :naive_dice, Reservation.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+test_mode_api_key =
+  "rk_test_51K1uECHcMxX2dWx5T4bhfUnxaPoTZ1Vv7vAbSsm0SYNv1uUvSWyAJgbd0uL8EWrqjCSXVYArr5NyH5as15iYaFu200g1aRELyk"
+
+config :naive_dice, Stripe, api_key: test_mode_api_key
+
 config :naive_dice, NaiveDiceWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,

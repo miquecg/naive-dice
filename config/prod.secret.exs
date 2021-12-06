@@ -12,6 +12,14 @@ config :naive_dice, Reservation.Repo,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
+live_mode_api_key =
+  System.get_env("STRIPE_API_KEY") ||
+    raise """
+    environment variable STRIPE_API_KEY is missing.
+    """
+
+config :naive_dice, Stripe, api_key: live_mode_api_key
+
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
     raise """

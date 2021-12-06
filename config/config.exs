@@ -1,7 +1,10 @@
 use Mix.Config
 
-config :naive_dice,
-  ecto_repos: [Reservation.Repo]
+config :naive_dice, ecto_repos: [Reservation.Repo]
+
+config :naive_dice, Stripe,
+  checkout_url: "https://api.stripe.com/v1/checkout/sessions",
+  api_key: ""
 
 config :naive_dice, NaiveDiceWeb.Endpoint,
   url: [host: "localhost"],
