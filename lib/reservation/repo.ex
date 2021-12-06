@@ -11,6 +11,12 @@ defmodule Reservation.Repo do
     |> insert()
   end
 
+  def close_order(%Order{} = order) do
+    order
+    |> Order.close()
+    |> insert()
+  end
+
   def ticket_purchased?(%Order{} = order) do
     clauses = [user_name: order.user_name, event_id: order.event_id]
 

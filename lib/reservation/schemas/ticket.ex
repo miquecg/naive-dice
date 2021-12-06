@@ -5,7 +5,9 @@ defmodule Reservation.Schemas.Ticket do
 
   use Ecto.Schema
 
-  alias Reservation.Schemas.Event
+  import Ecto.Changeset
+
+  alias Reservation.Schemas.{Event, Order}
 
   schema "tickets" do
     field :order_id, Ecto.UUID
@@ -14,5 +16,11 @@ defmodule Reservation.Schemas.Ticket do
     belongs_to :event, Event
 
     timestamps()
+  end
+
+  def changeset(%Order{status: :checkout_completed} = order) do
+    %__MODULE__{}
+    |> change(Map.take(order, [:order_id, :user_name, :event_id]))
+    |> assoc_constraint(:event)
   end
 end
