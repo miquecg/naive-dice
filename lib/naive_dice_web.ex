@@ -22,8 +22,10 @@ defmodule NaiveDiceWeb do
       use Phoenix.Controller, namespace: NaiveDiceWeb
 
       import Plug.Conn
+      import NaiveDiceWeb.Controller.Error
       import NaiveDiceWeb.Gettext
 
+      alias NaiveDiceWeb.Endpoint
       alias NaiveDiceWeb.Router.Helpers, as: Routes
     end
   end

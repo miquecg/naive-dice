@@ -1,7 +1,3 @@
-# In this file, we load production configuration and secrets
-# from environment variables. You can also hardcode secrets,
-# although such is generally not recommended and you have to
-# remember to add this file to your .gitignore.
 use Mix.Config
 
 database_url =
@@ -16,6 +12,14 @@ config :naive_dice, Reservation.Repo,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
+live_mode_api_key =
+  System.get_env("STRIPE_API_KEY") ||
+    raise """
+    environment variable STRIPE_API_KEY is missing.
+    """
+
+config :naive_dice, Stripe, api_key: live_mode_api_key
+
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
     raise """
@@ -26,13 +30,3 @@ secret_key_base =
 config :naive_dice, NaiveDiceWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base
-
-# ## Using releases (Elixir v1.9+)
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start each relevant endpoint:
-#
-#     config :naive_dice, NaiveDiceWeb.Endpoint, server: true
-#
-# Then you can assemble a release by calling `mix release`.
-# See `mix help release` for more information.

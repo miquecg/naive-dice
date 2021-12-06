@@ -1,6 +1,6 @@
 <div class="all-bold">
 
-    <p>Nice to meet you <%= @ticket.user_name %>!</p>
+    <p>Nice to meet you <%= @name %>!</p>
 
     <p>
     We reserved your ticket for 5 minutes
@@ -11,8 +11,8 @@
 </div>
 
 <%= button(
-    "TODO: integrate Stripe here",
-     to: Routes.order_path(@conn, :update, @ticket.id),
+    "Pay with Stripe Checkout",
+     to: Routes.order_path(@conn, :update, @token),
      method: :put,
      class: "btn btn-primary"
 ) %>

@@ -1,8 +1,8 @@
 <h1>Registered guests</h1>
 
 <ul class="list-unstyled">
-<%= for name <- @guest_names do %>
-  <li><%= name %></li>
+<%= for ticket <- @tickets do %>
+  <li><%= ticket.user_name %></li>
 <% end %>
 </ul>
 
@@ -13,7 +13,7 @@
     "Clear guests list and start over again with 5 tickets available", 
     to: Routes.guest_path(@conn, :reset_guests),
     method: :delete,
-    data: [confirm: "This will delete all tickets from the DB. OK?"],
+    data: [confirm: "This will delete **all** orders and tickets from DB. OK?"],
     class: "btn btn-primary"
   ) %>
 </p>

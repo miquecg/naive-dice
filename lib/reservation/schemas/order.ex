@@ -13,20 +13,23 @@ defmodule Reservation.Schemas.Order do
   @cancel_status [
     :booking_expired,
     :canceled_already_purchased,
-    :canceled_no_tickets
+    :canceled_no_tickets,
+    :checkout_create_failed,
+    :checkout_expired
   ]
   @progress_status [
     :booking_requested,
+    :checkout_created,
     :ticket_booked
   ]
-  @final_status [:checkout_completed]
+  @final_status :checkout_completed
 
   schema "orders" do
     field :order_id, Ecto.UUID
 
     field :status,
           Ecto.Enum,
-          values: @cancel_status ++ @progress_status ++ @final_status
+          values: @cancel_status ++ @progress_status ++ [@final_status]
 
     field :user_name, :string
     field :price_cents, :integer
@@ -55,6 +58,10 @@ defmodule Reservation.Schemas.Order do
 
   def cancel(%Order{} = order, status) when status in @cancel_status do
     change_status(order, status)
+  end
+
+  def close(%Order{} = order) do
+    change_status(order, @final_status)
   end
 
   def progress(%Order{} = order, status) when status in @progress_status do

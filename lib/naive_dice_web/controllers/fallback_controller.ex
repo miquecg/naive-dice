@@ -1,15 +1,11 @@
 defmodule NaiveDiceWeb.FallbackController do
   use NaiveDiceWeb, :controller
 
-  alias NaiveDiceWeb.ErrorView
+  require Logger
 
-  def call(conn, {:error, :event_not_found}) do
-    conn
-    |> put_status(404)
-    |> render_error()
-  end
+  def call(conn, {:error, :event_not_found}), do: render_error(conn, 404)
 
-  def call(conn, {:error, :no_tickets}), do: redirect_first_step(conn)
+  def call(conn, {:error, :no_tickets}), do: redirect_to_first_step(conn)
 
   def call(conn, {:error, {:invalid_order, %{} = errors}}) do
     call(conn, {:error, {:invalid_order, Keyword.new(errors)}})
@@ -19,18 +15,31 @@ defmodule NaiveDiceWeb.FallbackController do
   def call(conn, {:error, {:invalid_order, [user_name: [message]]}}) do
     conn
     |> put_flash(:error, "Name #{message}")
-    |> redirect_first_step()
+    |> redirect_to_first_step()
   end
 
-  defp render_error(conn) do
+  def call(conn, {:error, {:token, :expired}}) do
     conn
-    |> put_layout(false)
-    |> put_view(ErrorView)
-    |> render(:"#{conn.status}")
+    |> put_flash(:error, "Your payment session expired")
+    |> redirect_to_index()
   end
 
-  defp redirect_first_step(conn) do
+  def call(conn, {:error, {:token, :invalid}}) do
+    # Do some logging if it's interesting
+    redirect_to_index(conn)
+  end
+
+  def call(conn, {:error, error}) do
+    Logger.error(error)
+    render_error(conn, 500)
+  end
+
+  defp redirect_to_first_step(conn) do
     event_id = conn.params["event_id"]
     redirect(conn, to: Routes.event_order_path(conn, :new, event_id))
+  end
+
+  defp redirect_to_index(conn) do
+    redirect(conn, to: Routes.event_path(conn, :index))
   end
 end
