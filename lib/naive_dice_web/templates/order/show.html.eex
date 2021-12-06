@@ -1,4 +1,4 @@
-<h1>Congratulations <%= @ticket.user_name %>!</h1>
+<h1>Congratulations <%= @user_name %>!</h1>
 
 <p>
     You've been added to the 

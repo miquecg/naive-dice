@@ -14,6 +14,14 @@ defmodule Reservation.Order do
     :gen_statem.start_link(name, __MODULE__, order, opts)
   end
 
+  def name(id), do: {:via, Registry, {Registry.Orders, id}}
+
+  @five_seconds_timeout 5_000
+  def call(booking_id, request, timeout \\ @five_seconds_timeout) do
+    name = Reservation.Order.name(booking_id)
+    :gen_statem.call(name, request, timeout)
+  end
+
   ## Callbacks
 
   @impl :gen_statem

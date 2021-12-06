@@ -9,10 +9,6 @@ defmodule NaiveDiceWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", NaiveDiceWeb do
     pipe_through :browser
 
@@ -22,9 +18,12 @@ defmodule NaiveDiceWeb.Router do
       resources("/orders", OrderController, only: [:new, :create])
     end
 
-    resources("/orders", OrderController, only: [:edit, :update, :show])
+    resources("/orders", OrderController, only: [:edit, :update])
+
+    get "/orders", OrderController, :show
 
     resources("/guests", GuestController, only: [:index])
+
     delete "/guests/reset", GuestController, :reset_guests
   end
 end

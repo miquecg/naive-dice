@@ -25,6 +25,7 @@ defmodule NaiveDiceWeb do
       import NaiveDiceWeb.Controller.Error
       import NaiveDiceWeb.Gettext
 
+      alias NaiveDiceWeb.Endpoint
       alias NaiveDiceWeb.Router.Helpers, as: Routes
     end
   end

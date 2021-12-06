@@ -5,6 +5,8 @@ defmodule Reservation do
 
   alias Reservation.EctoHelpers
   alias Reservation.EventBooker
+  alias Reservation.Payment
+  alias Reservation.Payment.CheckoutSession
   alias Reservation.Repo
   alias Reservation.Schemas.{Event, Order}
 
@@ -14,8 +16,8 @@ defmodule Reservation do
   end
 
   def event_info(event_id, keys) do
-    # It would be good to optimise this a little an
-    # avoid hitting database for non existing events.
+    # It could be good to optimise this a little
+    # and query only the GenServer when possible.
     case Repo.get(Event, event_id) do
       nil ->
         {:error, :event_not_found}
@@ -40,8 +42,29 @@ defmodule Reservation do
     end
   end
 
-  defp build_info(%Event{id: id} = event, keys) do
-    Enum.reduce(keys, %{id: id}, &build_info(event, &1, &2))
+  @ten_seconds_timeout 10_000
+  def create_checkout(provider, booking_id, extra \\ []) do
+    request = {:create_checkout, provider, extra}
+
+    case Reservation.Order.call(booking_id, request, @ten_seconds_timeout) do
+      {:ok, %CheckoutSession{url: url}} ->
+        {:ok, url}
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
+  def notify(provider, {:payment_received, session_id}, returning \\ []) do
+    case Payment.Client.retrieve_checkout(provider, session_id) do
+      {:ok, %CheckoutSession{payment_status: :paid} = session} ->
+        {:ok, order} = Reservation.Order.call(session.booking_id, :payment_received)
+        {:ok, _} = Repo.allocate_ticket(order)
+        {:ok, build_info(order, returning)}
+
+      {:error, _} = error ->
+        error
+    end
   end
 
   defp build_info(event, :remaining_tickets = k, acc) do

@@ -30,8 +30,6 @@ defmodule Reservation.EventBooker do
     Base.hex_encode32(random_bytes, padding: false)
   end
 
-  defp name(id), do: {:via, Registry, {Registry.Orders, id}}
-
   ## Callbacks
 
   @impl GenServer
@@ -54,7 +52,8 @@ defmodule Reservation.EventBooker do
         reply_no_tickets(state)
 
       {_, state} ->
-        _ = start_booking(order: order, name: name(booking_id))
+        name = Order.name(booking_id)
+        _ = start_booking(order: order, name: name)
         reply_ok(booking_id, state)
     end
   end
@@ -106,7 +105,7 @@ defmodule Reservation.EventBooker do
         {current, current - 1}
 
       _ ->
-        # Maybe this is a bit too defensive
+        # Maybe this is a bit too defensive.
         Logger.error("Negative number of tickets for event #{order.event_id}")
         {:no_tickets, 0}
     end)

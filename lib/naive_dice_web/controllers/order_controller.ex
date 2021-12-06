@@ -3,15 +3,15 @@ defmodule NaiveDiceWeb.OrderController do
 
   require Logger
 
-  action_fallback(NaiveDiceWeb.FallbackController)
+  action_fallback NaiveDiceWeb.FallbackController
 
   plug :normalize when action in [:create]
 
   @doc """
-  STEP 1: Renders an empty form with user name input
+  STEP 1: Empty form with user name input
   """
   def new(conn, %{"event_id" => event_id}) do
-    with {:ok, event} <- Reservation.event_info(event_id, [:title, :remaining_tickets]) do
+    with {:ok, event} <- Reservation.event_info(event_id, [:id, :title, :remaining_tickets]) do
       conn
       |> maybe_show_error(event)
       |> render("new.html", %{event: event})
@@ -19,42 +19,58 @@ defmodule NaiveDiceWeb.OrderController do
   end
 
   @doc """
-  STEP 2: Renders the Stripe payment form
+  STEP 2: Payment button
   """
-  def edit(conn, %{"id" => _order_id}) do
-    render(conn, "edit.html")
-  end
-
-  @doc """
-  STEP 3: Renders the confirmation / receipt / thank you screen
-  """
-  def show(conn, %{"id" => ticket_id}) do
-    # TODO: don't render a pending ticket as a successfully purchased one
-    with {:ok, ticket} <- Reservation.get_ticket(ticket_id) do
-      render(conn, "show.html", %{ticket: ticket})
+  def edit(conn, %{"id" => token}) do
+    with {:ok, %{user_name: name}} <- verify(token) do
+      render(conn, "edit.html", name: name, token: token)
     end
   end
 
-  # TRANSITIONS BETWEEN WIZARD STEPS
+  @doc """
+  STEP 3: Confirmation screen
+  """
+  def show(conn, %{"session_id" => session_id}) do
+    provider = payment_provider()
+    event = {:payment_received, session_id}
+    returning = [:user_name]
+
+    with {:ok, data} <- Reservation.notify(provider, event, returning) do
+      render(conn, "show.html", data)
+    end
+  end
+
+  def show(conn, _), do: render_error(conn, 404)
+
+  # TRANSITIONS BETWEEN STEPS
 
   @doc """
   Books a ticket for 5 minutes
   """
+  @salt "ticket booking"
   def create(conn, %{"event_id" => event_id}) do
     user_name = conn.assigns[:user_name]
 
     with {:ok, booking_id} <- Reservation.book_event(event_id, user_name) do
-      token = Phoenix.Token.sign(NaiveDiceWeb.Endpoint, "ticket booking", booking_id)
+      data = %{event_id: event_id, booking_id: booking_id, user_name: user_name}
+      token = Phoenix.Token.sign(Endpoint, @salt, data)
       redirect(conn, to: Routes.order_path(conn, :edit, token))
     end
   end
 
   @doc """
-  Updates a ticket with the charge details and redirects to the confirmation / receipt / thank you
+  Triggers payment and redirects to payment form
   """
-  def update(conn, %{"id" => _order_id}) do
-    # TODO: implement
-    redirect(conn, to: Routes.order_path(conn, :show, "asdf"))
+  def update(conn, %{"id" => token}) do
+    with {:ok, %{booking_id: booking_id} = data} <- verify(token),
+         {:ok, event} = Reservation.event_info(data.event_id, [:title]),
+         extra = [client_reference_id: booking_id, description: event.title],
+         provider = payment_provider(),
+         {:ok, url} <- Reservation.create_checkout(provider, booking_id, extra) do
+      conn
+      |> put_status(303)
+      |> redirect(external: url)
+    end
   end
 
   defp normalize(conn, _opts) do
@@ -71,4 +87,18 @@ defmodule NaiveDiceWeb.OrderController do
   end
 
   defp maybe_show_error(conn, _), do: conn
+
+  @five_minutes_max_age [max_age: 300]
+  defp verify(token) do
+    case Phoenix.Token.verify(Endpoint, @salt, token, @five_minutes_max_age) do
+      {:ok, _} = ok -> ok
+      {:error, error} -> {:error, {:token, error}}
+    end
+  end
+
+  defp payment_provider do
+    {:ok, config} = Application.fetch_env(:naive_dice, Reservation.Payment)
+    {:ok, provider} = Keyword.fetch(config, :provider)
+    provider
+  end
 end

@@ -5,6 +5,12 @@ defmodule Reservation.Repo do
 
   alias Reservation.Schemas.{Order, Ticket}
 
+  def allocate_ticket(%Order{} = order) do
+    order
+    |> Ticket.changeset()
+    |> insert()
+  end
+
   def cancel_order(%Order{} = order, reason) do
     order
     |> Order.cancel(reason)
