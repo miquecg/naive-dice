@@ -9,7 +9,6 @@ defmodule Reservation.EventBooker do
 
   alias Reservation.{Order, OrderSupervisor}
   alias Reservation.Repo
-  alias Reservation.Schemas.Event
 
   def start_link(opts) do
     opts = Keyword.put_new(opts, :name, __MODULE__)
@@ -33,7 +32,7 @@ defmodule Reservation.EventBooker do
   ## Callbacks
 
   @impl GenServer
-  def init([]), do: {:ok, %{}, {:continue, :fetch}}
+  def init([]), do: {:ok, nil, {:continue, :fetch}}
 
   defguardp not_found(state, event_id) when not is_map_key(state, event_id)
 
@@ -71,12 +70,8 @@ defmodule Reservation.EventBooker do
   end
 
   @impl GenServer
-  def handle_continue(:fetch, state) do
-    # TODO: allocation - sold tickets
-    # resultado debe ser entero >= 0
-    events = Repo.all(Event)
-    state = Enum.into(events, state, fn e -> {e.id, e.allocation} end)
-    {:noreply, state}
+  def handle_continue(:fetch, nil) do
+    {:noreply, Repo.count_tickets_left()}
   end
 
   @impl GenServer

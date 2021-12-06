@@ -3,7 +3,9 @@ defmodule Reservation.Repo do
     otp_app: :naive_dice,
     adapter: Ecto.Adapters.Postgres
 
-  alias Reservation.Schemas.{Order, Ticket}
+  import Ecto.Query
+
+  alias Reservation.Schemas.{Event, Order, Ticket}
 
   def allocate_ticket(%Order{} = order) do
     order
@@ -21,6 +23,20 @@ defmodule Reservation.Repo do
     order
     |> Order.close()
     |> insert()
+  end
+
+  @doc """
+  Allocation - Sold tickets
+  """
+  def count_tickets_left do
+    Event
+    |> join(:left, [e], t in Ticket, on: e.id == t.event_id)
+    |> group_by([e], e.id)
+    |> select([e, t], {e.id, e.allocation - count(t.id)})
+    |> all()
+    |> Enum.reduce(%{}, fn {id, ticket_count}, acc ->
+      Map.put(acc, id, ticket_count)
+    end)
   end
 
   def ticket_purchased?(%Order{} = order) do
