@@ -5,6 +5,8 @@ defmodule NaiveDiceWeb.Controller.Error do
 
   import Phoenix.Controller, only: [put_layout: 2, put_view: 2, render: 2]
 
+  alias NaiveDiceWeb.ErrorView
+
   def render_error(conn, status) when is_integer(status) do
     conn
     |> Plug.Conn.put_status(status)
