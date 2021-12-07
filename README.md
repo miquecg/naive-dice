@@ -1,36 +1,11 @@
 # NaiveDice
 
-To start your Phoenix server:
+### Key points
+- To model the life cycle of a purchase I've decided to use the Erlang behaviour `gen_statem`. It offers a simple way of representing state transitions. Each state machine is a process that runs concurrently but also backed by the DB, achieving an auditable log of transactions. We could further improve this allowing orders to recover from failed states. This log is also nice for BI
+- `tickets` is now a table just for storing data about the ticket itself and not the purchase
+- `EventBooker` is the orchestrator. It holds the **current** number of tickets available, creates orders and monitors them; but interaction and transitions happen within the orders. It could be possible to refine this architecture to support high load with more than one `EventBooker` and sharding events.
+- Separation of concerns: web layer access domain layer through a well defined API. For that reason I've avoided exposing internal structures to the web part
+- I didn't intend to cover all possible cases of a payment (refunds, payment rejected, idempotency, ...). Focus was more on solving the challenge of correct ticket allocation
+- Some table indexes are not in place just because sample data is very small. Obviously, very common and important queries must be optimized on a real scenario
 
-  * Install dependencies with `mix deps.get`
-  * Create, migrate and seed your database with `mix ecto.setup`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-## Heroku Deployment 
-
-This app is prepared for heroku deployment.
-Please check [the deployment guides](https://hexdocs.pm/phoenix/heroku.html).
-
-TL;DR:
-```
-#/bin/bash
-heroku create --buildpack hashnuke/elixir
-heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
-heroku addons:create heroku-postgresql
-heroku config:set SECRET_KEY_BASE=`mix phx.gen.secret`
-git push heroku master
-heroku run mix ecto.migrate
-heroku run mix run priv/repo/seeds.exs
-heroku open
-```
-
-Set all other env variables you need (e.g. Stripe key) via `heroku config:set`
-
-## Learn Phoenix
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
+There's an instance of this app running on [Gigalixir](https://naive-dice.gigalixirapp.com/)
