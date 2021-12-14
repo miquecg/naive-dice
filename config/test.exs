@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :naive_dice, Reservation.Repo,
   username: "postgres",

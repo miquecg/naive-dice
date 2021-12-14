@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :naive_dice, ecto_repos: [Reservation.Repo]
 
