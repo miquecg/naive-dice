@@ -34,7 +34,6 @@ config :naive_dice, NaiveDiceWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
       ~r"lib/naive_dice_web/{live,views}/.*(ex)$",
       ~r"lib/naive_dice_web/templates/.*(eex)$"
     ]
