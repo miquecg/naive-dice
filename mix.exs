@@ -5,9 +5,9 @@ defmodule NaiveDice.MixProject do
     [
       app: :naive_dice,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -26,14 +26,14 @@ defmodule NaiveDice.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.5.13"},
+      {:phoenix, "~> 1.6.4"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
+      {:phoenix_live_view, "~> 0.17.5"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.8"}
