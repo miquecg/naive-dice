@@ -1,19 +1,31 @@
 defmodule NaiveDiceWeb.LayoutView do
   use NaiveDiceWeb, :view
 
-  def show_flash(conn) do
-    get_flash(conn) |> flash_msg
+  def flash_msg(conn) do
+    assigns = %{
+      info: get_flash(conn, :info),
+      error: get_flash(conn, :error)
+    }
+
+    ~H"""
+    <%= render("info.html", assigns) %>
+    <%= render("danger.html", assigns) %>
+    """
   end
 
-  def flash_msg(%{"info" => msg}) do
-    ~E"<div class='alert alert-info'><%= msg %></div>"
+  def render("info.html", %{info: nil}), do: nil
+
+  def render("info.html", assigns) do
+    ~H"""
+    <div class="alert alert-info"><%= @info %></div>
+    """
   end
 
-  def flash_msg(%{"error" => msg}) do
-    ~E"<div class='alert alert-danger'><%= msg %></div>"
-  end
+  def render("danger.html", %{error: nil}), do: nil
 
-  def flash_msg(_) do
-    nil
+  def render("danger.html", assigns) do
+    ~H"""
+    <div class="alert alert-danger"><%= @error %></div>
+    """
   end
 end

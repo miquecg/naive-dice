@@ -42,6 +42,9 @@ defmodule NaiveDiceWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
+      import Phoenix.LiveView.Helpers
+      import Phoenix.View
+
       import NaiveDiceWeb.ErrorHelpers
       import NaiveDiceWeb.Gettext
 

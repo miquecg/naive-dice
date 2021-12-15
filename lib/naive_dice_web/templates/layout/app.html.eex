@@ -6,7 +6,7 @@
   </head>
   <body class="bg-light">
     <div role="main" class="container">
-      <%= show_flash(@conn) %>
+      <%= flash_msg(@conn) %>
       <br>
       <br>
       <br>
